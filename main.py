@@ -14,7 +14,7 @@ CACHE_DIR = "image_cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 # Optional: restrict which domains are allowed
-ALLOWED_DOMAINS = {"image.tmdb.org"}
+# ALLOWED_DOMAINS = {"image.tmdb.org"}
 
 def get_cache_key(url: str, max_width: int, quality: int, fmt: str) -> str:
     key_string = f"{url}|{max_width}|{quality}|{fmt}"
@@ -29,15 +29,15 @@ async def optimize_image(
 ):
     # Optional: security check
     parsed = urlparse(url)
-    if parsed.netloc not in ALLOWED_DOMAINS:
-        raise HTTPException(status_code=403, detail="Domain not allowed")
+    # if parsed.netloc not in ALLOWED_DOMAINS:
+        # raise HTTPException(status_code=403, detail="Domain not allowed")
 
     cache_key = get_cache_key(url, max_width, quality, fmt)
     cached_path = os.path.join(CACHE_DIR, f"{cache_key}.{fmt}")
 
     if os.path.exists(cached_path):
         media_type = "image/webp" if fmt == "webp" else "image/jpeg"
-        return StreamingResponse(closing(open(cached_path, "rb")), media_type=media_type)
+        return StreamingResponse(open(cached_path, "rb"), media_type=media_type)
 
     # Download image
     async with httpx.AsyncClient() as client:
