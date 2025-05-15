@@ -2,7 +2,6 @@ import hashlib
 import os
 import io
 from urllib.parse import urlparse
-from contextlib import closing
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import StreamingResponse
@@ -72,7 +71,7 @@ async def optimize_image(
         raise HTTPException(status_code=500, detail=f"Could not save image: {e}")
 
     media_type = "image/webp" if fmt == "webp" else "image/jpeg"
-    return StreamingResponse(closing(open(cached_path, "rb")), media_type=media_type)
+    return StreamingResponse(open(cached_path, "rb"), media_type=media_type)
 
 if __name__ == "__main__":
     import uvicorn
